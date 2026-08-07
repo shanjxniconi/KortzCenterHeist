@@ -7,7 +7,7 @@ import {
 import { ItemRequest, ItemCalcResponse, ToolResponse, ApiError } from "lib/types";
 
 export type ItemHelper = {
-    calcItems: (itemRequest: ItemRequest) => Promise<ToolResponse<ItemCalcResponse>>;
+    calcItems: (itemRequest: ItemRequest) => Promise<ToolResponse<ItemCalcResponse[]>>;
 }
 
 export function init(server: string): ItemHelper {
@@ -43,8 +43,8 @@ export function init(server: string): ItemHelper {
         }
 
         return {
-            status: statusTxt, text: text, obj: json as ItemCalcResponse | ApiError
-        } as ToolResponse<ItemCalcResponse>;
+            status: statusTxt, text: text, obj: json as ItemCalcResponse[] | ApiError
+        } as ToolResponse<ItemCalcResponse[]>;
     };
 
     const calcItems = async (requestBody: ItemRequest) => {

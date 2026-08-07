@@ -27,6 +27,6 @@ public class ItemController {
     List<Item> items = request.multiPlayer() ? 
     request.items() : 
     request.items().stream().filter(item -> !item.location().equals("showroom")).toList();
-    return ResponseEntity.status(200).body(service.processItems(items, request.requiredItems()));
+    return ResponseEntity.status(200).body(service.processItems(items, request.requiredItems(), request.playerCount(), request.multiPlayer()));
   }
 }
