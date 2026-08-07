@@ -1,0 +1,59 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "lib": [ "esnext", "dom", "dom.iterable" ],
+        "jsx": "react-jsx",
+
+        "module": "esnext",
+
+        "moduleResolution": "bundler",
+        "baseUrl": ".",
+        "paths": {
+            "app/*": [ "./app/*" ],
+            "types/*": [ "./app/types/*" ],
+            "styles/*": [ "./app/styles/*" ],
+            "components/*": [ "./app/components/*" ],
+            "lib/*": [ "./app/lib/*" ],
+            "server/*": [ "./app/.server/*" ],
+        },
+
+        "rootDirs": [ ".", "./.react-router/types" ],
+        "types": [ "node", "vite/client" ],
+        "allowUmdGlobalAccess": false,
+        "allowImportingTsExtensions": false,
+        "rewriteRelativeImportExtensions": true,
+        "resolveJsonModule": true,
+        "allowArbitraryExtensions": false,
+        "allowJs": true,
+
+        "declaration": false,
+        "noEmit": true,
+        "downlevelIteration": false,
+
+        "isolatedModules": true,
+        "verbatimModuleSyntax": false,
+        "esModuleInterop": true,
+        "preserveSymlinks": true,
+        "forceConsistentCasingInFileNames": true,
+
+        "strict": true,
+        "noImplicitAny": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "exactOptionalPropertyTypes": true,
+        "noImplicitReturns": true,
+        "noUncheckedIndexedAccess": true,
+        "noImplicitOverride": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "allowUnusedLabels": true,
+        "allowUnreachableCode": true,
+
+        "skipDefaultLibCheck": true,
+        "skipLibCheck": true,
+    },
+    "include": [
+        "app/**/*",
+        ".react-router/types/**/*",
+        "*.ts"
+    ],
+}

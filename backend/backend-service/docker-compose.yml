@@ -1,0 +1,14 @@
+services:
+  backend-service:
+    build:
+      context: ./backend-service-persist
+      dockerfile: build/docker/Dockerfile
+    container_name: kortz-center-heist-backend
+    ports:
+      - "8080:8080"
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge

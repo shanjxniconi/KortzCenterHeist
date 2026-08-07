@@ -1,0 +1,10 @@
+com/kortz/rest/ItemController.class
+com/kortz/dto/ItemRequest$Builder.class
+com/kortz/dto/Item$Builder.class
+com/kortz/dto/ItemProcessResult.class
+com/kortz/dto/ItemProcessResult$Builder.class
+com/kortz/rest/HealthCheckController.class
+com/kortz/dto/Item.class
+com/kortz/Application.class
+com/kortz/service/ItemService.class
+com/kortz/dto/ItemRequest.class
