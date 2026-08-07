@@ -30,12 +30,14 @@ class ItemProcessResultTest {
       .selectedItemCount(2)
       .remainingVolume(5)
       .totalValue(300.0)
+      .totalValueAllPlayers(600.0)
       .selectedItems(items)
       .build();
 
     assertEquals(2, result.selectedItemCount());
     assertEquals(5, result.remainingVolume());
     assertEquals(300.0, result.totalValue());
+    assertEquals(600.0, result.totalValueAllPlayers());
     assertEquals(2, result.selectedItems().size());
     assertEquals("Item1", result.selectedItems().get(0).name());
     assertEquals("Item2", result.selectedItems().get(1).name());
@@ -47,12 +49,14 @@ class ItemProcessResultTest {
       .selectedItemCount(null)
       .remainingVolume(null)
       .totalValue(null)
+      .totalValueAllPlayers(null)
       .selectedItems(null)
       .build();
 
     assertNull(result.selectedItemCount());
     assertNull(result.remainingVolume());
     assertNull(result.totalValue());
+    assertNull(result.totalValueAllPlayers());
     assertNull(result.selectedItems());
   }
 
@@ -66,6 +70,7 @@ class ItemProcessResultTest {
     assertEquals(0, result.selectedItemCount());
     assertEquals(10, result.remainingVolume());
     assertNull(result.totalValue());
+    assertNull(result.totalValueAllPlayers());
     assertNull(result.selectedItems());
   }
 
@@ -79,6 +84,7 @@ class ItemProcessResultTest {
       .selectedItemCount(1)
       .remainingVolume(9)
       .totalValue(50.0)
+      .totalValueAllPlayers(100.0)
       .selectedItems(items)
       .build();
 
@@ -114,6 +120,7 @@ class ItemProcessResultTest {
       .selectedItemCount(1)
       .remainingVolume(9)
       .totalValue(100.0)
+      .totalValueAllPlayers(200.0)
       .selectedItems(items1)
       .build();
 
@@ -121,6 +128,7 @@ class ItemProcessResultTest {
       .selectedItemCount(1)
       .remainingVolume(9)
       .totalValue(100.0)
+      .totalValueAllPlayers(200.0)
       .selectedItems(items2)
       .build();
 
@@ -128,6 +136,7 @@ class ItemProcessResultTest {
       .selectedItemCount(2)
       .remainingVolume(8)
       .totalValue(100.0)
+      .totalValueAllPlayers(200.0)
       .selectedItems(items3)
       .build();
 
@@ -144,6 +153,7 @@ class ItemProcessResultTest {
       .selectedItemCount(1)
       .remainingVolume(9)
       .totalValue(100.0)
+      .totalValueAllPlayers(200.0)
       .selectedItems(items1)
       .build();
 
@@ -151,6 +161,7 @@ class ItemProcessResultTest {
       .selectedItemCount(1)
       .remainingVolume(9)
       .totalValue(100.0)
+      .totalValueAllPlayers(200.0)
       .selectedItems(items2)
       .build();
 
@@ -181,6 +192,7 @@ class ItemProcessResultTest {
       .selectedItemCount(2)
       .remainingVolume(7)
       .totalValue(8000.0)
+      .totalValueAllPlayers(16000.0)
       .selectedItems(items)
       .build();
 
@@ -189,6 +201,7 @@ class ItemProcessResultTest {
     assertTrue(json.contains("\"selectedItemCount\":2"));
     assertTrue(json.contains("\"remainingVolume\":7"));
     assertTrue(json.contains("\"totalValue\":8000.0"));
+    assertTrue(json.contains("\"totalValueAllPlayers\":16000.0"));
     assertTrue(json.contains("\"selectedItems\":"));
     assertTrue(json.contains("\"name\":\"Diamond\""));
     assertTrue(json.contains("\"name\":\"Gold\""));
@@ -206,18 +219,20 @@ class ItemProcessResultTest {
     assertTrue(json.contains("\"selectedItemCount\":0"));
     assertTrue(json.contains("\"remainingVolume\":10"));
     assertFalse(json.contains("\"totalValue\":"));
+    assertFalse(json.contains("\"totalValueAllPlayers\":"));
     assertFalse(json.contains("\"selectedItems\":"));
   }
 
   @Test
   public void testJacksonDeserialization() throws JsonProcessingException {
-    String json = "{\"selectedItemCount\":2,\"remainingVolume\":5,\"totalValue\":300.0,\"selectedItems\":[{\"name\":\"Item1\",\"volume\":2,\"value\":100.0,\"isAvailable\":true},{\"name\":\"Item2\",\"volume\":3,\"value\":200.0,\"isAvailable\":true}]}";
+    String json = "{\"selectedItemCount\":2,\"remainingVolume\":5,\"totalValue\":300.0,\"totalValueAllPlayers\":600.0,\"selectedItems\":[{\"name\":\"Item1\",\"volume\":2,\"value\":100.0,\"isAvailable\":true},{\"name\":\"Item2\",\"volume\":3,\"value\":200.0,\"isAvailable\":true}]}";
 
     ItemProcessResult result = objectMapper.readValue(json, ItemProcessResult.class);
 
     assertEquals(2, result.selectedItemCount());
     assertEquals(5, result.remainingVolume());
     assertEquals(300.0, result.totalValue());
+    assertEquals(600.0, result.totalValueAllPlayers());
     assertNotNull(result.selectedItems());
     assertEquals(2, result.selectedItems().size());
     assertEquals("Item1", result.selectedItems().get(0).name());
@@ -233,6 +248,7 @@ class ItemProcessResultTest {
     assertEquals(1, result.selectedItemCount());
     assertEquals(9, result.remainingVolume());
     assertNull(result.totalValue());
+    assertNull(result.totalValueAllPlayers());
     assertNull(result.selectedItems());
   }
 

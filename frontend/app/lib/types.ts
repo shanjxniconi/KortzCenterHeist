@@ -7,6 +7,7 @@ export interface HealthCheckResponse {
 
 export interface ItemRequest {
   multiPlayer: boolean;
+  playerCount: number;
   items: Item[];
   requiredItems: Item[];
 }
@@ -15,7 +16,8 @@ export interface ItemCalcResponse {
   selectedItemCount: number;
   remainingVolume: number;
   totalValue: number;
-  selectedItems: Item[];
+  totalValueAllPlayers?: number;
+  selectedItems?: Item[];
 }
 
 export type ToolResponse<T> = {

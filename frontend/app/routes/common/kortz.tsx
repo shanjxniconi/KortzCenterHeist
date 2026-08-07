@@ -98,19 +98,21 @@ export async function loader() {
 export default function Kortz({ loaderData }: Route.ComponentProps) {
   const [items, setItems] = useState<(Item & { isRequired?: boolean })[]>(ITEM_LIST);
   const [lastItems, setLastItems] = useState<Item[]>();
-  const [actionData, setActionData] = useState<ItemCalcResponse>();
+  const [actionData, setActionData] = useState<ItemCalcResponse[]>();
   const [showTooltip, setShowTooltip] = useState(false);
+  const [playerCount, setPlayerCount] = useState(1);
   const fetcher = useFetcher();
 
   useEffect(() => {
     if (fetcher.data) {
-      setActionData(fetcher.data as ItemCalcResponse);
+      setActionData(fetcher.data as ItemCalcResponse[]);
     }
   }, [fetcher.data]);
 
   useEffect(() => {
-    if (actionData !== null && actionData?.selectedItems !== null) {
-      setLastItems(actionData?.selectedItems);
+    if (actionData && actionData.length > 0) {
+      const allItems = actionData.flatMap(r => r.selectedItems || []);
+      setLastItems(allItems);
     }
   }, [actionData])
 
@@ -192,7 +194,8 @@ export default function Kortz({ loaderData }: Route.ComponentProps) {
     e.preventDefault(); 
     
     const itemRequest: ItemRequest = { 
-      multiPlayer: false, 
+      multiPlayer: playerCount !== 1, 
+      playerCount: playerCount,
       items: items.map(({ isRequired, ...item }) => ({ 
         ...item, 
         volume: ITEM_VOLUME[item.type || 'scattered'] || 0 
@@ -261,9 +264,49 @@ export default function Kortz({ loaderData }: Route.ComponentProps) {
         </div>
       )}
       <Form onSubmit={handleSubmit} style={{ maxWidth: '1400px', margin: '0 auto', padding: '30px', fontFamily: 'Arial, sans-serif', background: '#f5f7fa' }}>
-        <h1 style={{ textAlign: 'center', color: '#2c3e50', fontSize: '28px', marginBottom: '30px', fontWeight: 'bold' }}>
+        <h1 style={{ textAlign: 'center', color: '#2c3e50', fontSize: '28px', marginBottom: '20px', fontWeight: 'bold' }}>
           💎 科兹中心豪劫物品价值分析器
         </h1>
+
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', marginBottom: '30px' }}>
+          <span style={{ fontSize: '15px', color: '#2c3e50', fontWeight: 'bold' }}>👥 玩家数量:</span>
+          <div style={{ display: 'flex', gap: '8px', background: '#fff', padding: '6px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+            {[1, 2, 3, 4].map(count => (
+              <button
+                key={count}
+                type="button"
+                onClick={() => setPlayerCount(count)}
+                style={{
+                  padding: '10px 22px',
+                  border: 'none',
+                  borderRadius: '7px',
+                  fontSize: '15px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  background: playerCount === count ? '#3498db' : 'transparent',
+                  color: playerCount === count ? '#fff' : '#7f8c8d',
+                  boxShadow: playerCount === count ? '0 2px 8px rgba(52, 152, 219, 0.4)' : 'none',
+                  transform: playerCount === count ? 'translateY(-1px)' : 'none',
+                }}
+                onMouseOver={(e) => {
+                  if (playerCount !== count) {
+                    e.currentTarget.style.background = '#ecf0f1';
+                    e.currentTarget.style.color = '#2c3e50';
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (playerCount !== count) {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.color = '#7f8c8d';
+                  }
+                }}
+              >
+                {count}P
+              </button>
+            ))}
+          </div>
+        </div>
 
       <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
         {locations.map(location => (
@@ -376,7 +419,7 @@ export default function Kortz({ loaderData }: Route.ComponentProps) {
         </button>
       </div>
 
-      {actionData && (
+      {actionData && actionData.length > 0 && (
         <div style={{ marginTop: '30px', position: 'relative' }}>
           <button
             type="button"
@@ -404,70 +447,95 @@ export default function Kortz({ loaderData }: Route.ComponentProps) {
             📊 分析结果
           </h3>
 
-          <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '30px' }}>
-            <div style={{ background: '#fff', borderRadius: '8px', padding: '20px', minWidth: '160px', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', borderTop: '3px solid #3498db' }}>
-              <div style={{ fontSize: '14px', color: '#7f8c8d', marginBottom: '8px' }}>选中物品数</div>
-              <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#2c3e50' }}>{actionData.selectedItemCount}</div>
-            </div>
-            <div style={{ background: '#fff', borderRadius: '8px', padding: '20px', minWidth: '160px', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', borderTop: '3px solid #e74c3c' }}>
-              <div style={{ fontSize: '14px', color: '#7f8c8d', marginBottom: '8px' }}>剩余容量</div>
-              <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#e74c3c' }}>{actionData.remainingVolume}</div>
-            </div>
-            <div style={{ background: '#fff', borderRadius: '8px', padding: '20px', minWidth: '160px', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', borderTop: '3px solid #27ae60' }}>
-              <div style={{ fontSize: '14px', color: '#7f8c8d', marginBottom: '8px' }}>总价值</div>
-              <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#27ae60' }}>{actionData.totalValue}</div>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            {locations.map(location => {
-              const locationItems = (fetcher.data as ItemCalcResponse).selectedItems.filter(item => item.location === location);
-              if (locationItems.length === 0) return null;
-              return (
-                <div
-                  key={location}
-                  style={{
-                    background: '#fff',
-                    borderRadius: '8px',
-                    padding: '15px',
-                    minWidth: '200px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                    borderTop: '3px solid #27ae60',
-                  }}
-                >
-                  <h3 style={{ margin: '0 0 15px 0', color: '#2c3e50', fontSize: '16px', fontWeight: 'bold', borderBottom: '2px solid #eee', paddingBottom: '8px' }}>
-                    {LOCATION_LABELS[location]}
-                  </h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    {locationItems.map((item, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          padding: '10px',
-                          background: '#f8f9fa',
-                          borderRadius: '4px',
-                        }}
-                      >
-                        <span style={{ fontSize: '13px', color: '#34495e' }}>
-                          {item.name} ({TYPE_LABELS[item.type || ''] || item.type || ''})
-                        </span>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <span style={{ fontSize: '12px', color: '#7f8c8d', backgroundColor: '#eee', padding: '2px 6px', borderRadius: '3px' }}>
-                            容量: {item.volume}
-                          </span>
-                          <span style={{ fontSize: '14px', color: '#27ae60', fontWeight: 'bold' }}>
-                            {item.value}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+          {actionData[0]?.totalValueAllPlayers != null && (
+            <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+              <div style={{ display: 'inline-block', background: 'linear-gradient(135deg, #27ae60, #2ecc71)', color: '#fff', borderRadius: '12px', padding: '20px 50px', boxShadow: '0 4px 16px rgba(39, 174, 96, 0.3)' }}>
+                <div style={{ fontSize: '14px', marginBottom: '6px', opacity: 0.9 }}>
+                  {actionData.length > 1 ? '👥 所有玩家总价值' : '💰 总价值'}
                 </div>
-              );
-            })}
+                <div style={{ fontSize: '40px', fontWeight: 'bold' }}>{actionData[0].totalValueAllPlayers}</div>
+              </div>
+            </div>
+          )}
+
+          <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+          {actionData.map((playerResult, playerIdx) => {
+            const isMulti = actionData.length > 1;
+            return (
+            <div key={playerIdx} style={{ flex: isMulti ? '1 1 0' : '1 1 100%', minWidth: isMulti ? '280px' : 'auto', maxWidth: isMulti ? '600px' : 'none', border: isMulti ? '1px solid #e0e0e0' : 'none', borderRadius: isMulti ? '10px' : '0', overflow: 'hidden' }}>
+              {isMulti && (
+              <div style={{ background: '#3498db', color: '#fff', padding: '10px 20px', fontSize: '16px', fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>👤 玩家 {playerIdx + 1}</span>
+                <span style={{ fontSize: '14px' }}>总价值: {playerResult.totalValue}</span>
+              </div>
+              )}
+
+              <div style={{ display: 'flex', gap: '8px', padding: '15px' }}>
+                <div style={{ flex: '1 1 0', background: '#fff', borderRadius: '8px', padding: '12px 8px', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', borderTop: '3px solid #3498db' }}>
+                  <div style={{ fontSize: '12px', color: '#7f8c8d', marginBottom: '4px' }}>选中物品数</div>
+                  <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#2c3e50' }}>{playerResult.selectedItemCount}</div>
+                </div>
+                <div style={{ flex: '1 1 0', background: '#fff', borderRadius: '8px', padding: '12px 8px', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', borderTop: '3px solid #e74c3c' }}>
+                  <div style={{ fontSize: '12px', color: '#7f8c8d', marginBottom: '4px' }}>剩余容量</div>
+                  <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#e74c3c' }}>{playerResult.remainingVolume}</div>
+                </div>
+                <div style={{ flex: '1 1 0', background: '#fff', borderRadius: '8px', padding: '12px 8px', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', borderTop: '3px solid #27ae60' }}>
+                  <div style={{ fontSize: '12px', color: '#7f8c8d', marginBottom: '4px' }}>总价值</div>
+                  <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#27ae60' }}>{playerResult.totalValue}</div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', padding: '0 15px 15px' }}>
+                {locations.map(location => {
+                  const locationItems = (playerResult.selectedItems || []).filter(item => item.location === location);
+                  if (locationItems.length === 0) return null;
+                  return (
+                    <div
+                      key={location}
+                      style={{
+                        width: '100%',
+                        background: '#fff',
+                        borderRadius: '8px',
+                        padding: '12px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                        borderTop: '3px solid #27ae60',
+                      }}
+                    >
+                      <h3 style={{ margin: '0 0 10px 0', color: '#2c3e50', fontSize: '14px', fontWeight: 'bold', borderBottom: '2px solid #eee', paddingBottom: '6px' }}>
+                        {LOCATION_LABELS[location]}
+                      </h3>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        {locationItems.map((item, index) => (
+                          <div
+                            key={index}
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: 'repeat(15, 1fr)',
+                              alignItems: 'center',
+                              padding: '8px',
+                              background: '#f8f9fa',
+                              borderRadius: '4px',
+                            }}
+                          >
+                            <span style={{ gridColumn: '1 / span 8', textAlign: 'left', fontSize: '12px', color: '#34495e' }}>
+                              {item.name} ({TYPE_LABELS[item.type || ''] || item.type || ''})
+                            </span>
+                            <span style={{ gridColumn: '9 / span 3', textAlign: 'center', fontSize: '11px', color: '#7f8c8d', backgroundColor: '#eee', padding: '2px 6px', borderRadius: '3px' }}>
+                              容量: {item.volume}
+                            </span>
+                            <span style={{ gridColumn: '14 / span 2', textAlign: 'right', fontSize: '13px', color: '#27ae60', fontWeight: 'bold' }}>
+                              {item.value}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            );
+          })}
           </div>
         </div>
       )}

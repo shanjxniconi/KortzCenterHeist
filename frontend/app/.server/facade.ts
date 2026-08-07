@@ -32,10 +32,10 @@ async function calcItems(itemRequest: ItemRequest) {
     });
 
     const response = result.obj;
-    if (Array.isArray(response) && response.length > 0) {
-        return response[0] as ItemCalcResponse;
+    if (Array.isArray(response)) {
+        return response as ItemCalcResponse[];
     }
-    return response as ItemCalcResponse;
+    return [response] as ItemCalcResponse[];
 }
 
 export { checkHealth, calcItems };

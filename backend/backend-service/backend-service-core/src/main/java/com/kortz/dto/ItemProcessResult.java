@@ -7,12 +7,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.List;
 
-@JsonPropertyOrder({"selectedItemCount", "remainingVolume", "totalValue", "selectedItems"})
+@JsonPropertyOrder({"selectedItemCount", "remainingVolume", "totalValue", "totalValueAllPlayers", "selectedItems"})
 @JsonInclude(NON_EMPTY)
 public record ItemProcessResult(
   @JsonProperty("selectedItemCount") Integer selectedItemCount,
   @JsonProperty("remainingVolume") Integer remainingVolume,
   @JsonProperty("totalValue") Double totalValue,
+  @JsonProperty("totalValueAllPlayers") Double totalValueAllPlayers,
   @JsonProperty("selectedItems") List<Item> selectedItems
 ) {
 
@@ -25,16 +26,18 @@ public record ItemProcessResult(
     private Integer selectedItemCount;
     private Integer remainingVolume;
     private Double totalValue;
+    private Double totalValueAllPlayers;
     private List<Item> selectedItems;
 
     public ItemProcessResult build() {
-      return new ItemProcessResult(selectedItemCount, remainingVolume, totalValue, selectedItems);
+      return new ItemProcessResult(selectedItemCount, remainingVolume, totalValue, totalValueAllPlayers, selectedItems);
     }
 
     public Builder copy(ItemProcessResult ori) {
       return selectedItemCount(ori.selectedItemCount)
         .remainingVolume(ori.remainingVolume)
         .totalValue(ori.totalValue)
+        .totalValueAllPlayers(ori.totalValueAllPlayers)
         .selectedItems(ori.selectedItems);
     }
 
@@ -50,6 +53,11 @@ public record ItemProcessResult(
 
     public Builder totalValue(Double totalValue) {
       this.totalValue = totalValue;
+      return this;
+    }
+
+    public Builder totalValueAllPlayers(Double totalValueAllPlayers) {
+      this.totalValueAllPlayers = totalValueAllPlayers;
       return this;
     }
 
