@@ -109,7 +109,7 @@ public class ItemService {
     double finalTotalValue = preTotalValue + bestEntry.value;
     int finalRemaining = maxVolume - bestVolume;
 
-    System.out.println("single-DP total value: " + finalTotalValue +
+    System.out.println("single-DP total value: " + (Math.round(finalTotalValue * 100) / 100.0) +
       ", used: " + bestVolume + "/" + maxVolume +
       ", items: " + finalSelection.size());
 
@@ -207,9 +207,11 @@ public class ItemService {
       List<Item> playerItems = new ArrayList<>(preSelectedPerKnapsack.get(k));
       playerItems.addAll(best.selections.get(k));
 
-      double playerValue = playerItems.stream().mapToDouble(Item::value).sum();
+      double playerValueSum = playerItems.stream().mapToDouble(Item::value).sum();
+      double playerValue = Math.round(playerValueSum * 100) / 100.0;
       if (k == 0) {
         playerValue += preBonus;
+        playerValue = Math.round(playerValue * 100) / 100.0;
       }
 
       int playerRemaining = caps[k] - bestVs[k];
@@ -222,8 +224,9 @@ public class ItemService {
         .build());
     }
 
+    double multiDpTotal = results.stream().mapToDouble(ItemProcessResult::totalValue).sum();
     System.out.println("multi-DP players: " + knapsackCount +
-      ", best total value: " + results.stream().mapToDouble(ItemProcessResult::totalValue).sum());
+      ", best total value: " + (Math.round(multiDpTotal * 100) / 100.0));
 
     return results;
   }
@@ -370,10 +373,12 @@ public class ItemService {
           if (item.volume() != null && item.value() != null && item.volume() > 0 && item.value() > 0 && item.volume() <= currentMaxVolume) {
             preSelectedItems.add(item);
             preTotalValue += item.value();
+            preTotalValue = Math.round(preTotalValue * 100) / 100.0;
             currentMaxVolume -= item.volume();
           }
         }
         preTotalValue += 20;
+        preTotalValue = Math.round(preTotalValue * 100) / 100.0;
       }
     }
 
