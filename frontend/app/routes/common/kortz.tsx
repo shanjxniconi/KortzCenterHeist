@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Route } from './+types/kortz';
 import { Form, useFetcher } from "react-router";
-import { TrashIcon } from '@heroicons/react/24/outline';
+import { StarIcon as SolidStar } from '@heroicons/react/24/solid';
+import { TrashIcon, StarIcon as OutlineStar } from '@heroicons/react/24/outline';
 import { Item, ItemRequest, ItemCalcResponse } from 'lib/types';
 import * as F from 'server/facade';
 
@@ -352,14 +353,17 @@ export default function Kortz({ loaderData }: Route.ComponentProps) {
                       <span
                         onClick={(e) => { e.stopPropagation(); handleToggleRequired(index); }}
                         style={{
-                          fontSize: '16px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
                           cursor: 'pointer',
                           transition: 'transform 0.2s',
                         }}
                         onMouseOver={(e) => { e.currentTarget.style.transform = 'scale(1.2)'; }}
                         onMouseOut={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
                       >
-                        {isRequired ? '★' : '☆'}
+                        {isRequired
+                          ? <SolidStar style={{ width: '16px', height: '16px', color: '#ffc107', display: 'block' }} />
+                          : <OutlineStar style={{ width: '16px', height: '16px', color: '#adb5bd', display: 'block' }} />}
                       </span>
                       <input
                         type="number"
